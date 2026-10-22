@@ -1,0 +1,11 @@
+[branding]
+name = "FileBrowser"
+icon_class = "fa-solid fa-folder" # A font-awesome free 7.3.1 compatible icon for your branding
+
+[scopes.root]
+path = "."
+permissions = [
+    "view",
+    "download",
+    "upload",
+]

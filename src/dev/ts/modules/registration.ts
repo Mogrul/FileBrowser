@@ -1,22 +1,13 @@
-import {client, StartLoginResult} from "@serenity-kit/opaque";
-
-interface ServerStartRegistrationResponse {
-    registrationResponse: string;
-    requestId: string;
-}
-
-interface StartRegistrationResult {
-    username: string;
-    password: string;
-    clientRegistrationState: string;
-    serverRegistrationResponse: string;
-    serverRequestId: string
-}
+import { client } from "@serenity-kit/opaque";
+import type {
+    ServerResponse,
+    RegistrationStartResult,
+} from "../types";
 
 export async function startRegistration(
         username: string,
         password: string,
-): Promise<StartLoginResult> {
+): Promise<RegistrationStartResult | string> {
     const { clientRegistrationState, registrationRequest } =
         client.startRegistration({ password });
 
@@ -29,42 +20,44 @@ export async function startRegistration(
         })
     });
 
-    if (!response.ok) {
-        throw new Error("Failed to start registration");
-    }
+    const serverResponse = await response.json() as ServerResponse;
 
-    const serverResponse =
-        await response.json() as ServerStartRegistrationResponse;
+    if (!serverResponse.success) {
+        return serverResponse.message;
+    }
 
     return {
         username,
         password,
-        clientRegistrationState,
-        serverRegistrationResponse: serverResponse.registrationResponse,
-        serverRequestId: serverResponse.requestId
+        state: clientRegistrationState,
+        serverResponse,
     }
 }
 
 export async function finishRegistration(
-    startRegistrationResult: StartRegistrationResult,
-): null {
-    const registrationResponse = startRegistrationResult.serverRegistrationResponse.replace(/=+$/, "");
-    const { registrationRecord } = client.finishRegistration({
-        password: startRegistrationResult.password,
-        clientRegistrationState: startRegistrationResult.clientRegistrationState,
+    startResult: RegistrationStartResult,
+): Promise<ServerResponse | string> {
+    const registrationResponse = startResult.serverResponse.data.registrationResponse.replace(/=+$/, "");
+    const result = client.finishRegistration({
+        password: startResult.password,
+        clientRegistrationState: startResult.state,
         registrationResponse
     });
+
+    if (!result) {
+        return "Failed to finish registration";
+    }
+
+    const { registrationRecord } = result;
 
     const response = await fetch("/api/registration/finish", {
         method: "POST",
         headers: {"Content-Type": "application/json" },
         body: JSON.stringify({
-            requestId: startRegistrationResult.serverRequestId,
+            requestId: startResult.serverResponse.data.requestId,
             registrationRecord,
         })
     });
 
-    if (!response.ok) {
-        throw new Error("Failed to finish registration");
-    }
+    return await response.json();
 }

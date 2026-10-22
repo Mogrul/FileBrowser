@@ -2,12 +2,138 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>{{ branding.name }}</title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css"
+    >
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 </head>
 <body>
-    <button type="button" id="login-button">Login</button>
-    <button type="button" id="register-button">Register</button>
+    <header class="header">
+        <a href="{{ url_for('index.index') }}" class="brand">
+            <div class="brand-logo" aria-hidden="true">
+                <i class="{{ branding.icon_class }}"></i>
+            </div>
 
-    <script type="module" src="{{ get_ts('pages/login.ts') }}" defer></script>
+            <span class="brand-name">{{ branding.name }}</span>
+        </a>
+
+        <nav class="header-actions" aria-label="Main navigation">
+            <button
+                type="button"
+                class="header-button"
+                id="config-button"
+                aria-label="Configure"
+            >
+                <i class="fa-solid fa-gear"></i>
+                <span>Configure</span>
+            </button>
+
+            <button
+                type="button"
+                class="header-button"
+                id="logout-button"
+                aria-label="Logout"
+            >
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Sign out</span>
+            </button>
+        </nav>
+    </header>
+
+    <main class="content">
+        <div class="layout">
+            <aside class="sidebar">
+                <div class="sidebar-heading">Scopes</div>
+
+                <nav class="scope-list" aria-label="Scopes">
+                    {% for scope in allowed_scopes %}
+                        <a class="scope-item" href="{{ url_for('index.index', scope=scope) }}">
+                            <span>{{ scope }}</span>
+                        </a>
+                    {% endfor %}
+                </nav>
+            </aside>
+
+            <section class="browser">
+                <div class="browser-heading">
+                    <div>
+                        <p class="browser-subtitle">
+                            {{ entry_name }}
+                        </p>
+                    </div>
+                </div>
+
+                <nav class="breadcrumbs" aria-label="Breadcrumbs">
+                    {% for crumb in breadcrumbs %}
+                        <a href="{{ crumb.url }}">
+                            {{ crumb.name }}
+                            <span class="breadcrumb-seperator">/</span>
+                        </a>
+                    {% endfor %}
+                </nav>
+
+                <section class="browser-section">
+                    <h2>Folders <span id="folder-count">0</span></h2>
+
+                    <div class="folder-grid">
+                        {% for entry in file_entries %}
+                            {% if entry.type == 'folder' %}
+                                <a class="folder-card" href="{{ entry.url }}">
+                                    <i class="fa-solid fa-folder folder-icon"></i>
+                                    <span class="folder-name">{{ entry.name }}</span>
+                                    <i class="fa-solid fa-circle-chevron-right card-chevron"></i>
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </section>
+
+                <section class="browser-section">
+                    <div class="file-grid">
+                        {% for entry in file_entries %}
+                            {% if entry.type != 'folder' %}
+                                <a
+                                        href="{{ entry.url }}"
+                                        class="file-card"
+                                        data-type="{{ entry.type }}"
+                                        data-id="{{ entry.id }}"
+                                >
+                                    <div class="file-preview">
+                                        {% if entry.type != 'other' %}
+                                            <img
+                                                    src="{{ url_for('api.files.thumbnail', path=entry.id) }}"
+                                                    loading="lazy"
+                                                    alt="{{ entry.name }}"
+                                            >
+                                            {% if entry.type == 'image' %}
+                                                <i class="fa-solid fa-image file-type-icon"></i>
+                                            {% elif entry.type == 'video' %}
+                                                <i class="fa-solid fa-video file-type-icon"></i>
+                                            {% endif %}
+                                        {% else %}
+                                            <i class="fa-solid fa-file file-placeholder"></i>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="file-details">
+                                        <span class="file-name">{{ entry.name }}</span>
+                                        <span class="file-meta">
+                                            <span>{{ entry.size }}</span>
+                                            <span>{{ entry.modified }}</span>
+                                        </span>
+                                    </div>
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </section>
+            </section>
+        </div>
+    </main>
+
+    <script type="module" src="{{ get_ts('pages/index.ts') }}" defer></script>
 </body>
 </html>

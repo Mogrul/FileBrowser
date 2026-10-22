@@ -33,7 +33,7 @@ def generate_opaque_setup(key: str) -> opaque_ke_py.ServerSetupData:
     cipher = Fernet(key.encode("ascii"))
 
     if OPAQUE_SETUP_PATH.exists():
-        return opaque_ke_py.ServerSetupData(
+        return opaque_ke_py.ServerSetupData.from_bytes(
             cipher.decrypt(OPAQUE_SETUP_PATH.read_bytes()),
         )
 

@@ -371,3 +371,6 @@ vite.config.ts.timestamp-*
 
 .idea
 src/.keys
+*.db
+.thumbnails
+src/static/js

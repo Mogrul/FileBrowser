@@ -1,21 +1,20 @@
 import { client } from "@serenity-kit/opaque";
+import type {
+    ServerResponse,
+    LoginStartResult
+} from "../types";
 
-interface ServerStartLoginResponse {
-    loginResponse: string;
-    requestId: string;
-}
+export async function logout(): Promise<void> {
+    const response = await fetch("/api/login/logout", { method: "POST" });
+    const serverResponse = await response.json() as ServerResponse;
 
-interface StartLoginResult {
-    password: string;
-    clientLoginState: string;
-    serverLoginResponse: string;
-    serverRequestId: string;
+    console.log(serverResponse);
 }
 
 export async function startLogin(
         username: string,
         password: string,
-): Promise<StartLoginResult> {
+): Promise<LoginStartResult | string> {
     const { clientLoginState, startLoginRequest } =
         client.startLogin({ password });
 
@@ -28,41 +27,43 @@ export async function startLogin(
         }),
     });
 
-    if (!response.ok) {
-        throw new Error("Failed to start login");
-    }
+    const serverResponse = await response.json() as ServerResponse;
 
-    const serverResponse =
-        await response.json() as ServerStartLoginResponse;
+    if (!serverResponse.success) {
+        return serverResponse.message;
+    }
 
     return {
         password,
-        clientLoginState,
-        serverLoginResponse: serverResponse.loginResponse,
-        serverRequestId: serverResponse.requestId
+        state: clientLoginState,
+        serverResponse,
     }
 }
 
 export async function finishLogin(
-        startLoginResult: StartLoginResult,
-): null {
-    const loginResponse = startLoginResult.serverLoginResponse.replace(/=+$/, "");
-    const { finishLoginRequest } = client.finishLogin({
-        password: startLoginResult.password,
-        clientLoginState: startLoginResult.clientLoginState,
+        loginResult: LoginStartResult,
+): Promise<ServerResponse | string> {
+    const loginResponse = loginResult.serverResponse.data.loginResponse.replace(/=+$/, "");
+    const result = client.finishLogin({
+        password: loginResult.password,
+        clientLoginState: loginResult.state,
         loginResponse,
-    })
+    });
+
+    if (!result) {
+        return "Invalid request";
+    }
+
+    const { finishLoginRequest } = result;
 
     const response = await fetch("/api/login/finish", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
-            requestId: startLoginResult.serverRequestId,
+            requestId: loginResult.serverResponse.data.requestId,
             finishLoginRequest,
         })
     });
 
-    if (!response.ok) {
-        throw new Error("Failed to finish login");
-    }
+    return await response.json();
 }

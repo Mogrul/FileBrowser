@@ -12,6 +12,7 @@ export default defineConfig({
                 "modules/login": resolve("src/dev/ts/modules/login.ts"),
                 "modules/registration": resolve("src/dev/ts/modules/registration.ts"),
                 "pages/login": resolve("src/dev/ts/pages/login.ts"),
+                "pages/index": resolve("src/dev/ts/pages/index.ts"),
             },
 
             output: {

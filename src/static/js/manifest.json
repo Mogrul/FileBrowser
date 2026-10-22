@@ -4,7 +4,7 @@
     "name": "esm"
   },
   "src/dev/ts/modules/login.ts": {
-    "file": "modules/login-BlZVbz-B.js",
+    "file": "modules/login-GatqKSBd.js",
     "name": "modules/login",
     "src": "src/dev/ts/modules/login.ts",
     "isEntry": true,
@@ -13,7 +13,7 @@
     ]
   },
   "src/dev/ts/modules/registration.ts": {
-    "file": "modules/registration-Du8vHAO6.js",
+    "file": "modules/registration-62sdT380.js",
     "name": "modules/registration",
     "src": "src/dev/ts/modules/registration.ts",
     "isEntry": true,
@@ -21,8 +21,18 @@
       "_esm-BNLOxp5X.js"
     ]
   },
+  "src/dev/ts/pages/index.ts": {
+    "file": "pages/index-vxj8mV8W.js",
+    "name": "pages/index",
+    "src": "src/dev/ts/pages/index.ts",
+    "isEntry": true,
+    "imports": [
+      "src/dev/ts/modules/login.ts",
+      "src/dev/ts/modules/login.ts"
+    ]
+  },
   "src/dev/ts/pages/login.ts": {
-    "file": "pages/login-BypvWFvo.js",
+    "file": "pages/login-QaAxE9FZ.js",
     "name": "pages/login",
     "src": "src/dev/ts/pages/login.ts",
     "isEntry": true,
