@@ -2,6 +2,7 @@ import logging
 
 from flask import Flask
 
+from filebrowser.args import args
 from filebrowser.globals import STATIC_DIR, TEMPLATE_DIR, SESSION_LIFETIME
 from filebrowser.app.routes import register_all
 from filebrowser.app.assets import get_ts_url
@@ -32,8 +33,13 @@ class App(Flask):
         self.logger.info("Registered Endpoints: %s",
                          list(self.blueprints))
 
-    def start(self, host = "127.0.0.1", port = 80):
-        self.run(host=host, port=port, debug=True, use_reloader=False)
+    def start(self):
+        self.run(
+            host=args.host,
+            port=args.port,
+            debug=True,
+            use_reloader=False
+        )
 
 
 
