@@ -1,0 +1,36 @@
+{
+  "_esm-BNLOxp5X.js": {
+    "file": "chunks/esm-BNLOxp5X.js",
+    "name": "esm"
+  },
+  "src/dev/ts/modules/login.ts": {
+    "file": "modules/login-BlZVbz-B.js",
+    "name": "modules/login",
+    "src": "src/dev/ts/modules/login.ts",
+    "isEntry": true,
+    "imports": [
+      "_esm-BNLOxp5X.js"
+    ]
+  },
+  "src/dev/ts/modules/registration.ts": {
+    "file": "modules/registration-Du8vHAO6.js",
+    "name": "modules/registration",
+    "src": "src/dev/ts/modules/registration.ts",
+    "isEntry": true,
+    "imports": [
+      "_esm-BNLOxp5X.js"
+    ]
+  },
+  "src/dev/ts/pages/login.ts": {
+    "file": "pages/login-BypvWFvo.js",
+    "name": "pages/login",
+    "src": "src/dev/ts/pages/login.ts",
+    "isEntry": true,
+    "imports": [
+      "src/dev/ts/modules/login.ts",
+      "src/dev/ts/modules/login.ts",
+      "src/dev/ts/modules/registration.ts",
+      "src/dev/ts/modules/registration.ts"
+    ]
+  }
+}
